@@ -11,7 +11,7 @@ export default defineEventHandler(async (event) => {
       });
     }
 
-    const { content } = await readBody(event);
+    const { content, subject } = await readBody(event);
 
     const { data: subscribers, error } = await supabase
       .from("subscribers")

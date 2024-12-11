@@ -29,8 +29,6 @@ export const generateEmailTemplate = async ({
     breaks: true,
   });
 
-  const contentWithName = parsedContent.replace(/{{name}}/g, name);
-
   return `
     <!DOCTYPE html>
     <html>
@@ -106,7 +104,7 @@ export const generateEmailTemplate = async ({
           <!-- Contenu principal -->
           <div style="padding: 40px 30px; background: #1e293b; margin-top: 40px;">
             <div class="content-wrapper">
-              ${contentWithName}
+              ${parsedContent}
             </div>
           </div>
           

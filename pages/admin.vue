@@ -96,7 +96,6 @@
             rows="8"
             class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-100 focus:ring-purple-500/50 font-mono"
             required
-            v-pre
             placeholder="# Bonjour {{ name }} !
 
 **Bienvenue** dans notre newsletter.
@@ -316,7 +315,10 @@ async function confirmSend() {
         "Content-Type": "application/json",
         Authorization: `Bearer ${config.public.adminSecret}`,
       },
-      body: JSON.stringify(form.value),
+      body: JSON.stringify({
+        content: form.value.content,
+        subject: form.value.subject,
+      }),
     });
 
     const data = await response.json();
