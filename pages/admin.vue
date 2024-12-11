@@ -77,7 +77,7 @@
         <div>
           <label class="block text-gray-300 mb-2">Contenu</label>
           <div class="text-sm text-gray-400 mb-2">
-            Syntaxe Markdown supportée :
+            Syntaxe Markdown et variables supportées :
             <ul class="list-disc list-inside ml-4 mt-1">
               <li># à ###### pour les titres</li>
               <li>**texte** pour le gras</li>
@@ -85,7 +85,10 @@
               <li>~~texte~~ pour barré</li>
               <li>__texte__ pour souligné</li>
               <li>> pour les citations</li>
-              <li>{{ name }} pour insérer le prénom</li>
+              <li v-pre>{{ name }} pour le prénom</li>
+              <li v-pre>{{ date }} pour la date du jour</li>
+              <li v-pre>{{ year }} pour l'année en cours</li>
+              <li v-pre>{{ email_count }} pour le nombre d'abonnés</li>
             </ul>
           </div>
           <textarea
@@ -93,7 +96,8 @@
             rows="8"
             class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-100 focus:ring-purple-500/50 font-mono"
             required
-            placeholder="# Bonjour {{name}} !
+            v-pre
+            placeholder="# Bonjour {{ name }} !
 
 **Bienvenue** dans notre newsletter.
 

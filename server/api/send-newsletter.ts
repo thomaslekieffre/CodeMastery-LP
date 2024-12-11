@@ -1,5 +1,5 @@
 import { supabase } from "../utils/supabase";
-import { sendEmail } from "../utils/resend";
+import { sendEmail } from "../utils/brevo";
 
 export default defineEventHandler(async (event) => {
   try {
@@ -13,7 +13,6 @@ export default defineEventHandler(async (event) => {
 
     const { subject, content } = await readBody(event);
 
-    // Récupération des abonnés
     const { data: subscribers, error: subsError } = await supabase
       .from("subscribers")
       .select("*");
@@ -32,10 +31,11 @@ export default defineEventHandler(async (event) => {
       sendEmail({
         to: sub.email,
         subject,
-        content: content.replace("{{name}}", sub.name),
+        content,
         subscriber: {
           ...sub,
           unsubscribeToken: sub.unsubscribe_token,
+          totalSubscribers: subscribers.length,
         },
       })
     );

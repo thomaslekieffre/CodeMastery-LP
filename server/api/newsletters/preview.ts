@@ -26,10 +26,11 @@ export default defineEventHandler(async (event) => {
       };
     }
 
-    const preview = generateEmailTemplate({
-      content: content.replace("{{name}}", subscribers[0].name),
+    const preview = await generateEmailTemplate({
+      content,
       name: subscribers[0].name,
       unsubscribeToken: subscribers[0].unsubscribe_token,
+      subscriberCount: subscribers.length,
     });
 
     return {
