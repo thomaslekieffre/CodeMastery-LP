@@ -1,3 +1,5 @@
+import { marked } from "marked";
+
 export const generateEmailTemplate = ({
   content,
   name,
@@ -7,6 +9,12 @@ export const generateEmailTemplate = ({
   name: string;
   unsubscribeToken: string;
 }) => {
+  // Convertir le Markdown en HTML
+  const parsedContent = marked(content.replace("{{name}}", name), {
+    gfm: true,
+    breaks: true,
+  });
+
   return `
     <!DOCTYPE html>
     <html>
@@ -14,6 +22,46 @@ export const generateEmailTemplate = ({
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>CodeMastery Newsletter</title>
+        <style>
+          h1, h2, h3, h4, h5, h6 {
+            color: #e2e8f0;
+            margin-top: 1.5em;
+            margin-bottom: 0.5em;
+          }
+          h1 { font-size: 2em; }
+          h2 { font-size: 1.5em; }
+          h3 { font-size: 1.25em; }
+          h4 { font-size: 1em; }
+          h5 { font-size: 0.875em; }
+          h6 { font-size: 0.85em; }
+          
+          strong { color: #e2e8f0; }
+          em { color: #cbd5e1; }
+          del { color: #94a3b8; }
+          u { color: #e2e8f0; }
+          
+          blockquote {
+            border-left: 4px solid #6d28d9;
+            margin: 1em 0;
+            padding: 0.5em 1em;
+            background: rgba(109, 40, 217, 0.1);
+            color: #94a3b8;
+          }
+          
+          code {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 0.2em 0.4em;
+            border-radius: 3px;
+            font-family: monospace;
+          }
+          
+          pre {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 1em;
+            border-radius: 6px;
+            overflow-x: auto;
+          }
+        </style>
       </head>
       <body style="background-color: #0f172a; font-family: 'Arial', sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 20px;">
         <div style="max-width: 600px; margin: 0 auto; background-color: #1e293b; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);">
@@ -27,7 +75,7 @@ export const generateEmailTemplate = ({
           
           <div style="padding: 40px 30px; background: #1e293b;">
             <div style="color: #e2e8f0; font-size: 16px; line-height: 1.8;">
-              ${content.replace("{{name}}", name)}
+              ${parsedContent}
             </div>
           </div>
           

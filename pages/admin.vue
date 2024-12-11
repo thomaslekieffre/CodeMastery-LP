@@ -76,12 +76,30 @@
 
         <div>
           <label class="block text-gray-300 mb-2">Contenu</label>
+          <div class="text-sm text-gray-400 mb-2">
+            Syntaxe Markdown supportée :
+            <ul class="list-disc list-inside ml-4 mt-1">
+              <li># à ###### pour les titres</li>
+              <li>**texte** pour le gras</li>
+              <li>*texte* pour l'italique</li>
+              <li>~~texte~~ pour barré</li>
+              <li>__texte__ pour souligné</li>
+              <li>> pour les citations</li>
+              <li>{{ name }} pour insérer le prénom</li>
+            </ul>
+          </div>
           <textarea
             v-model="form.content"
-            rows="6"
-            class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-100 focus:ring-purple-500/50"
+            rows="8"
+            class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-100 focus:ring-purple-500/50 font-mono"
             required
-            placeholder="Utilisez {{name}} pour personnaliser le message"
+            placeholder="# Bonjour {{name}} !
+
+**Bienvenue** dans notre newsletter.
+
+> Une citation inspirante ici
+
+*À bientôt !*"
           ></textarea>
         </div>
 
@@ -128,7 +146,10 @@
                 Sujet : <span class="text-gray-200">{{ form.subject }}</span>
               </p>
               <p class="text-gray-400 mt-2">Aperçu pour le premier abonné :</p>
-              <div class="mt-2 text-gray-200" v-html="previewContent"></div>
+              <div
+                class="mt-2 text-gray-200 prose prose-invert max-w-none"
+                v-html="previewContent"
+              ></div>
             </div>
             <p class="text-gray-300">
               Envoyer à {{ subscriberCount }} abonnés ?
