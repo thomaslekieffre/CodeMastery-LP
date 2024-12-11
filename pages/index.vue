@@ -229,12 +229,18 @@ const formData = ref({
 const isLoading = ref(false);
 const showSuccess = ref(false);
 const errorMessage = ref("");
+const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
 const handleSubmit = async () => {
   try {
     console.log("Soumission du formulaire...");
     isLoading.value = true;
     errorMessage.value = "";
+
+    if (!emailRegex.test(formData.value.email)) {
+      throw new Error("Adresse email invalide");
+    }
+
     const response = await fetch("/api/subscribe", {
       method: "POST",
       body: JSON.stringify(formData.value),

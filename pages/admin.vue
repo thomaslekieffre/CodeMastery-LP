@@ -1,5 +1,40 @@
 <template>
   <div
+    v-if="!isAuthenticated"
+    class="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center p-8"
+  >
+    <div
+      class="max-w-md w-full bg-gray-800/50 backdrop-blur-xl p-8 rounded-xl border border-gray-700"
+    >
+      <h1 class="text-2xl font-bold text-purple-400 mb-6 text-center">
+        Administration
+      </h1>
+
+      <form @submit.prevent="checkPassword" class="space-y-4">
+        <div>
+          <input
+            type="password"
+            v-model="password"
+            placeholder="Mot de passe administrateur"
+            class="w-full rounded-lg bg-gray-900/50 border-gray-700 text-gray-100 focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500"
+            required
+            :disabled="isLocked"
+          />
+        </div>
+
+        <div v-if="error" class="text-red-400 text-sm text-center">
+          {{ error }}
+        </div>
+
+        <div v-if="isLocked" class="text-orange-400 text-sm text-center">
+          Trop de tentatives. Réessayez dans {{ lockTimeRemaining }} secondes.
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div
+    v-else
     class="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 p-8"
   >
     <div class="max-w-4xl mx-auto">
@@ -7,11 +42,21 @@
         <h1 class="text-3xl font-bold text-purple-400">
           Administration Newsletter
         </h1>
-        <div class="bg-gray-800/50 px-4 py-2 rounded-lg border border-gray-700">
-          <span class="text-gray-400">Abonnés :</span>
-          <span class="text-purple-400 font-bold ml-2">{{
-            subscriberCount
-          }}</span>
+        <div class="flex items-center gap-4">
+          <div
+            class="bg-gray-800/50 px-4 py-2 rounded-lg border border-gray-700"
+          >
+            <span class="text-gray-400">Abonnés :</span>
+            <span class="text-purple-400 font-bold ml-2">{{
+              subscriberCount
+            }}</span>
+          </div>
+          <button
+            @click="handleLogout"
+            class="bg-red-500/10 hover:bg-red-500/20 text-red-400 px-4 py-2 rounded-lg border border-red-500/20 transition-colors"
+          >
+            Déconnexion
+          </button>
         </div>
       </div>
 
@@ -133,15 +178,68 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
 
 const config = useRuntimeConfig();
+const MAX_ATTEMPTS = 3;
+const LOCK_DURATION = 30; // secondes
+
+const isAuthenticated = ref(false);
+const password = ref("");
+const error = ref("");
+const attempts = ref(0);
+const isLocked = ref(false);
+const lockTimeRemaining = ref(0);
+let lockTimer = null;
 const subscriberCount = ref(0);
 const sentNewsletters = ref([]);
 const form = ref({ subject: "", content: "" });
 const isSending = ref(false);
 const showConfirmModal = ref(false);
 const previewContent = ref("");
+
+const checkPassword = () => {
+  if (isLocked.value) return;
+
+  if (password.value === config.public.adminSecret) {
+    isAuthenticated.value = true;
+    error.value = "";
+    attempts.value = 0;
+  } else {
+    attempts.value++;
+    error.value = `Mot de passe incorrect (${attempts.value}/${MAX_ATTEMPTS} tentatives)`;
+
+    if (attempts.value >= MAX_ATTEMPTS) {
+      lockAccount();
+    }
+  }
+  password.value = "";
+};
+
+const lockAccount = () => {
+  isLocked.value = true;
+  lockTimeRemaining.value = LOCK_DURATION;
+  error.value = "";
+
+  lockTimer = setInterval(() => {
+    lockTimeRemaining.value--;
+    if (lockTimeRemaining.value <= 0) {
+      clearInterval(lockTimer);
+      isLocked.value = false;
+      attempts.value = 0;
+    }
+  }, 1000);
+};
+
+const handleLogout = () => {
+  isAuthenticated.value = false;
+  password.value = "";
+  error.value = "";
+};
+
+onUnmounted(() => {
+  if (lockTimer) clearInterval(lockTimer);
+});
 
 async function loadData() {
   const config = useRuntimeConfig();
