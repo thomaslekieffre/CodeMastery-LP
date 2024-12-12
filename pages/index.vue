@@ -3,7 +3,20 @@
     class="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900"
   >
     <div
-      class="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]"
+      class="absolute inset-0 opacity-[0.3]"
+      style="
+        background-image: linear-gradient(
+            to right,
+            rgba(255, 255, 255, 0.1) 1px,
+            transparent 1px
+          ),
+          linear-gradient(
+            to bottom,
+            rgba(255, 255, 255, 0.1) 1px,
+            transparent 1px
+          );
+        background-size: 80px 80px;
+      "
     ></div>
 
     <header class="container mx-auto py-16 relative">
